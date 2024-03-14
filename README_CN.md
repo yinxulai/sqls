@@ -1,5 +1,5 @@
 # sqls
-ˇ
+
 sqls 是针对喜欢自己编写 `sql` 而不是使用 `ORM` 的开发者准备的，没有任何特殊的东西，只是简单的帮助你更好的编辑 `sql`
 
 > sqls 的含义是 `sql+s`，其中 `s` 的含义是 `string` 以及 `simple`、`small`

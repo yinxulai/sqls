@@ -1,5 +1,3 @@
-// sqls = sql + s
-// s = string + simple + small
 package sqls
 
 import (
@@ -10,10 +8,10 @@ import (
 )
 
 const (
-	DELETE       = "DELETE"
-	SELECT       = "SELECT"
-	UPDATE       = "UPDATE"
-	INSERT_INTO  = "INSERT INTO"
+	DELETE                     = "DELETE"
+	SELECT                     = "SELECT"
+	UPDATE                     = "UPDATE"
+	INSERT_INTO                = "INSERT INTO"
 	CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS"
 )
 
