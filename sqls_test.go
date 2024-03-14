@@ -98,7 +98,7 @@ func TestComplexSelectStatement(t *testing.T) {
 
 func TestCreateTableStatement(t *testing.T) {
 	s := Begin()
-	s.CREATE_TABLE_IF_NOT_EXISTS(
+	s.IF_NOT_EXISTS().CREATE_TABLE(
 		"PERSON",
 		"id INT PRIMARY KEY",
 		"username VARCHAR(50) NOT NULL",
@@ -108,6 +108,17 @@ func TestCreateTableStatement(t *testing.T) {
 	)
 	result := s.String()
 	expected := "CREATE TABLE IF NOT EXISTS PERSON\n(id INT PRIMARY KEY, username VARCHAR(50) NOT NULL, email VARCHAR(100) UNIQUE, age INT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"
+
+	if result != expected {
+		t.Errorf("Case1() 返回值为 %s，期望值为 %s", result, expected)
+	}
+}
+
+func TestCreateSchemaStatement(t *testing.T) {
+	s := Begin()
+	s.IF_NOT_EXISTS().CREATE_SCHEMA("PERSON")
+	result := s.String()
+	expected := "CREATE SCHEMA IF NOT EXISTS PERSON"
 
 	if result != expected {
 		t.Errorf("Case1() 返回值为 %s，期望值为 %s", result, expected)

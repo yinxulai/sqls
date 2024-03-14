@@ -8,17 +8,20 @@ import (
 )
 
 const (
-	DELETE                     = "DELETE"
-	SELECT                     = "SELECT"
-	UPDATE                     = "UPDATE"
-	INSERT_INTO                = "INSERT INTO"
-	CREATE_TABLE_IF_NOT_EXISTS = "CREATE TABLE IF NOT EXISTS"
+	DELETE        = "DELETE"
+	SELECT        = "SELECT"
+	UPDATE        = "UPDATE"
+	INSERT_INTO   = "INSERT INTO"
+	CREATE_TABLE  = "CREATE TABLE"
+	CREATE_SCHEMA = "CREATE SCHEMA"
 )
 
 type statement struct {
 	set            []string
+	schema         string
 	selects        []string
 	distinct       bool
+	ifNotExists    bool
 	table          []string
 	join           []string
 	innerJoin      []string
@@ -241,10 +244,27 @@ func (s *sqlBuilder) SET(v ...string) *sqlBuilder {
 }
 
 // 创建数据表
-func (s *sqlBuilder) CREATE_TABLE_IF_NOT_EXISTS(t string, fields ...string) *sqlBuilder {
-	s.class = CREATE_TABLE_IF_NOT_EXISTS
+// 后面可以接 IF_NOT_EXISTS
+func (s *sqlBuilder) CREATE_TABLE(t string, fields ...string) *sqlBuilder {
+	s.class = CREATE_TABLE
 	s.statement.table = append(s.statement.table, t)
 	s.statement.columns = append(s.statement.columns, fields...)
+	return s
+}
+
+func (s *sqlBuilder) CREATE_SCHEMA(t string) *sqlBuilder {
+	s.class = CREATE_SCHEMA
+	s.statement.schema = t
+	return s
+}
+
+func (s *sqlBuilder) IF_NOT_EXISTS() *sqlBuilder {
+	s.statement.ifNotExists = true
+	return s
+}
+
+func (s *sqlBuilder) IF_EXISTS() *sqlBuilder {
+	s.statement.ifNotExists = false
 	return s
 }
 
@@ -323,9 +343,23 @@ func (s *sqlBuilder) String() string {
 		sqlString += s.join("VALUES", "(", s.statement.values, ", ", ")")
 	}
 
-	if s.class == CREATE_TABLE_IF_NOT_EXISTS {
-		sqlString += s.join("CREATE TABLE IF NOT EXISTS", "", s.statement.table, "", "")
+	if s.class == CREATE_TABLE {
+		keyword := "CREATE TABLE"
+		if s.statement.ifNotExists {
+			keyword += " IF NOT EXISTS"
+		}
+
+		sqlString += s.join(keyword, "", s.statement.table, "", "")
 		sqlString += s.join("", "(", s.statement.columns, ", ", ")")
+	}
+
+	if s.class == CREATE_SCHEMA {
+		keyword := "CREATE SCHEMA"
+		if s.statement.ifNotExists {
+			keyword += " IF NOT EXISTS"
+		}
+
+		sqlString += s.join(keyword, "", []string{s.statement.schema}, "", "")
 	}
 
 	return strings.Trim(sqlString, "\n")
