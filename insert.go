@@ -22,15 +22,10 @@ func newInsertBuilder() *insertBuilder {
 	return builder
 }
 
-func INSERT_INTO(v string) *insertBuilder {
-	s := newInsertBuilder()
-	s.statement.table = append(s.statement.table, v)
-	return s
-}
-
 // 启动插入语句并指定要插入的表。
 // 此后应跟一个或多个 VALUES()
-func (s *insertBuilder) INSERT_INTO(v string) *insertBuilder {
+func INSERT_INTO(v string) *insertBuilder {
+	s := newInsertBuilder()
 	s.statement.table = append(s.statement.table, v)
 	return s
 }
@@ -55,13 +50,5 @@ func (s *insertBuilder) String() string {
 }
 
 func (s *insertBuilder) Params() []any {
-	result := []any{}
-	sqlString := s.String()
-	matches := s.builder.paramRegexp.FindAllString(sqlString, -1)
-
-	for _, match := range matches {
-		result = append(result, s.builder.params[match])
-	}
-
-	return result
+	return s.builder.Params(s.String())
 }

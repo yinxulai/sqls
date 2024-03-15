@@ -48,13 +48,5 @@ func (s *createSchemaBuilder) String() string {
 }
 
 func (s *createSchemaBuilder) Params() []any {
-	result := []any{}
-	sqlString := s.String()
-	matches := s.builder.paramRegexp.FindAllString(sqlString, -1)
-
-	for _, match := range matches {
-		result = append(result, s.builder.params[match])
-	}
-
-	return result
+	return s.builder.Params(s.String())
 }

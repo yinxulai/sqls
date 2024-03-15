@@ -1,6 +1,7 @@
 package sqls
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -37,15 +38,43 @@ func UPDATE(v string) *updateBuilder {
 	return s
 }
 
-func (s *updateBuilder) UPDATE(v string) *updateBuilder {
-	s.statement.table = append(s.statement.table, v)
+func (s *updateBuilder) SET(key string, value string) *updateBuilder {
+	s.statement.set = append(s.statement.set, fmt.Sprintf("%s=%s", key, value))
+	return s
+}
+
+// JOIN 根据调用的方法添加适当类型的新子句。
+// 该参数可以包括由列和连接条件组成的标准连接。
+func (s *updateBuilder) JOIN(v string) *updateBuilder {
+	s.statement.join = append(s.statement.join, v)
+	return s
+}
+
+// JOIN 根据调用的方法添加适当类型的新子句。
+// 该参数可以包括由列和连接条件组成的标准连接。
+func (s *updateBuilder) INNER_JOIN(v string) *updateBuilder {
+	s.statement.innerJoin = append(s.statement.innerJoin, v)
+	return s
+}
+
+// JOIN 根据调用的方法添加适当类型的新子句。
+// 该参数可以包括由列和连接条件组成的标准连接。
+func (s *updateBuilder) LEFT_OUTER_JOIN(v string) *updateBuilder {
+	s.statement.leftOuterJoin = append(s.statement.leftOuterJoin, v)
+	return s
+}
+
+// JOIN 根据调用的方法添加适当类型的新子句。
+// 该参数可以包括由列和连接条件组成的标准连接。
+func (s *updateBuilder) RIGHT_OUTER_JOIN(v string) *updateBuilder {
+	s.statement.rightOuterJoin = append(s.statement.rightOuterJoin, v)
 	return s
 }
 
 // 附加一个新的WHERE子句条件，由 AND 串联。
 // 可以多次调用，这会导致它每次都将新条件与 AND 串联起来
-func (s *updateBuilder) WHERE(v ...string) *updateBuilder {
-	s.statement.where = append(s.statement.where, v...)
+func (s *updateBuilder) WHERE(v string) *updateBuilder {
+	s.statement.where = append(s.statement.where, v)
 	return s
 }
 
@@ -89,13 +118,5 @@ func (s *updateBuilder) String() string {
 }
 
 func (s *updateBuilder) Params() []any {
-	result := []any{}
-	sqlString := s.String()
-	matches := s.builder.paramRegexp.FindAllString(sqlString, -1)
-
-	for _, match := range matches {
-		result = append(result, s.builder.params[match])
-	}
-
-	return result
+	return s.builder.Params(s.String())
 }

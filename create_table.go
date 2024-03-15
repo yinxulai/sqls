@@ -5,7 +5,7 @@ import (
 )
 
 type createTableStatement struct {
-	table       []string
+	table       string
 	columns     []string
 	ifNotExists bool
 }
@@ -24,7 +24,7 @@ func newCreateTableBuilder() *createTableBuilder {
 
 func CREATE_TABLE(v string) *createTableBuilder {
 	s := newCreateTableBuilder()
-	s.statement.table = append(s.statement.table, v)
+	s.statement.table = v
 	return s
 }
 
@@ -33,8 +33,8 @@ func (s *createTableBuilder) IF_NOT_EXISTS() *createTableBuilder {
 	return s
 }
 
-func (s *createTableBuilder) COLUMN(v ...string) *createTableBuilder {
-	s.statement.columns = append(s.statement.columns, v...)
+func (s *createTableBuilder) COLUMN(v string) *createTableBuilder {
+	s.statement.columns = append(s.statement.columns, v)
 	return s
 }
 
@@ -49,19 +49,11 @@ func (s *createTableBuilder) String() string {
 		keyword += " IF NOT EXISTS"
 	}
 
-	sqlString += s.builder.join(keyword, "", s.statement.table, "", "")
+	sqlString += s.builder.join(keyword, "", []string{s.statement.table}, "", "")
 	sqlString += s.builder.join("", "(", s.statement.columns, ", ", ")")
 	return strings.Trim(sqlString, "\n")
 }
 
 func (s *createTableBuilder) Params() []any {
-	result := []any{}
-	sqlString := s.String()
-	matches := s.builder.paramRegexp.FindAllString(sqlString, -1)
-
-	for _, match := range matches {
-		result = append(result, s.builder.params[match])
-	}
-
-	return result
+	return s.builder.Params(s.String())
 }

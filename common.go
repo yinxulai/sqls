@@ -7,14 +7,14 @@ import (
 )
 
 type sqlBuilder struct {
-	params      map[string]any
-	paramRegexp *regexp.Regexp
+	params map[string]any
 }
+
+var paramRegexp = regexp.MustCompile(`\$\d+`)
 
 func newSqlBuilder() *sqlBuilder {
 	builder := &sqlBuilder{}
 	builder.params = make(map[string]any)
-	builder.paramRegexp = regexp.MustCompile("$([0-9]+)")
 	return builder
 }
 
@@ -53,4 +53,15 @@ func (s *sqlBuilder) Param(v any) string {
 	key := fmt.Sprintf("$%d", paramsIndex)
 	s.params[key] = v
 	return key
+}
+
+func (s *sqlBuilder) Params(sql string) []any {
+	result := []any{}
+	matches := paramRegexp.FindAllString(sql, -1)
+
+	for _, match := range matches {
+		result = append(result, s.params[match])
+	}
+
+	return result
 }

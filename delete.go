@@ -33,8 +33,8 @@ func DELETE_FROM(v string) *deleteBuilder {
 
 // 附加一个新的WHERE子句条件，由 AND 串联。
 // 可以多次调用，这会导致它每次都将新条件与 AND 串联起来
-func (s *deleteBuilder) WHERE(v ...string) *deleteBuilder {
-	s.statement.where = append(s.statement.where, v...)
+func (s *deleteBuilder) WHERE(v string) *deleteBuilder {
+	s.statement.where = append(s.statement.where, v)
 	return s
 }
 
@@ -60,7 +60,7 @@ func (s *deleteBuilder) LIMIT(v string) *deleteBuilder {
 // 附加一个OFFSET子句。该方法与 SELECT() 一起使用时有效。
 // 该方法设计为与 LIMIT() 一起使用。
 func (s *deleteBuilder) OFFSET(v string) *deleteBuilder {
-	s.statement.limit = v
+	s.statement.offset = v
 	return s
 }
 
@@ -83,13 +83,5 @@ func (s *deleteBuilder) String() string {
 }
 
 func (s *deleteBuilder) Params() []any {
-	result := []any{}
-	sqlString := s.String()
-	matches := s.builder.paramRegexp.FindAllString(sqlString, -1)
-
-	for _, match := range matches {
-		result = append(result, s.builder.params[match])
-	}
-
-	return result
+	return s.builder.Params(s.String())
 }

@@ -69,43 +69,43 @@ func (s *selectBuilder) SELECT_DISTINCT(v ...string) *selectBuilder {
 
 // 开始或附加到FROM子句。可以多次调用，并且参数将附加到FROM子句中。
 // 参数通常是表名和别名，或者驱动程序可接受的任何内容。
-func (s *selectBuilder) FROM(v ...string) *selectBuilder {
-	s.statement.table = append(s.statement.table, v...)
+func (s *selectBuilder) FROM(v string) *selectBuilder {
+	s.statement.table = append(s.statement.table, v)
 	return s
 }
 
 // JOIN 根据调用的方法添加适当类型的新子句。
 // 该参数可以包括由列和连接条件组成的标准连接。
-func (s *selectBuilder) JOIN(v ...string) *selectBuilder {
-	s.statement.join = append(s.statement.join, v...)
+func (s *selectBuilder) JOIN(v string) *selectBuilder {
+	s.statement.join = append(s.statement.join, v)
 	return s
 }
 
 // JOIN 根据调用的方法添加适当类型的新子句。
 // 该参数可以包括由列和连接条件组成的标准连接。
-func (s *selectBuilder) INNER_JOIN(v ...string) *selectBuilder {
-	s.statement.innerJoin = append(s.statement.innerJoin, v...)
+func (s *selectBuilder) INNER_JOIN(v string) *selectBuilder {
+	s.statement.innerJoin = append(s.statement.innerJoin, v)
 	return s
 }
 
 // JOIN 根据调用的方法添加适当类型的新子句。
 // 该参数可以包括由列和连接条件组成的标准连接。
-func (s *selectBuilder) LEFT_OUTER_JOIN(v ...string) *selectBuilder {
-	s.statement.leftOuterJoin = append(s.statement.leftOuterJoin, v...)
+func (s *selectBuilder) LEFT_OUTER_JOIN(v string) *selectBuilder {
+	s.statement.leftOuterJoin = append(s.statement.leftOuterJoin, v)
 	return s
 }
 
 // JOIN 根据调用的方法添加适当类型的新子句。
 // 该参数可以包括由列和连接条件组成的标准连接。
-func (s *selectBuilder) RIGHT_OUTER_JOIN(v ...string) *selectBuilder {
-	s.statement.rightOuterJoin = append(s.statement.rightOuterJoin, v...)
+func (s *selectBuilder) RIGHT_OUTER_JOIN(v string) *selectBuilder {
+	s.statement.rightOuterJoin = append(s.statement.rightOuterJoin, v)
 	return s
 }
 
 // 附加一个新的WHERE子句条件，由 AND 串联。
 // 可以多次调用，这会导致它每次都将新条件与 AND 串联起来
-func (s *selectBuilder) WHERE(v ...string) *selectBuilder {
-	s.statement.where = append(s.statement.where, v...)
+func (s *selectBuilder) WHERE(v string) *selectBuilder {
+	s.statement.where = append(s.statement.where, v)
 	s.statement.lastContext = "WHERE"
 	return s
 }
@@ -134,22 +134,22 @@ func (s *selectBuilder) AND() *selectBuilder {
 
 // 追加一个新的 GROUP BY 子句元素，并用逗号连接。
 // 可以多次调用，这会导致它每次都用逗号连接新条件。
-func (s *selectBuilder) GROUP_BY(v ...string) *selectBuilder {
-	s.statement.groupBy = append(s.statement.groupBy, v...)
+func (s *selectBuilder) GROUP_BY(v string) *selectBuilder {
+	s.statement.groupBy = append(s.statement.groupBy, v)
 	return s
 }
 
 // 追加一个新的 HAVING 子句条件，并通过 AND 连接。
 // 可以多次调用，这会导致它每次都将新条件与 串联起来AND。使用 OR() 来分割 OR。
-func (s *selectBuilder) HAVING(v ...string) *selectBuilder {
-	s.statement.having = append(s.statement.having, v...)
+func (s *selectBuilder) HAVING(v string) *selectBuilder {
+	s.statement.having = append(s.statement.having, v)
 	s.statement.lastContext = "HAVING"
 	return s
 }
 
 // 追加一个新的ORDER BY子句元素，并用逗号连接。可以多次调用，这会导致它每次都用逗号连接新条件。
-func (s *selectBuilder) ORDER_BY(v ...string) *selectBuilder {
-	s.statement.orderBy = append(s.statement.orderBy, v...)
+func (s *selectBuilder) ORDER_BY(v string) *selectBuilder {
+	s.statement.orderBy = append(s.statement.orderBy, v)
 	return s
 }
 
@@ -163,7 +163,7 @@ func (s *selectBuilder) LIMIT(v string) *selectBuilder {
 // 附加一个OFFSET子句。该方法与 SELECT() 一起使用时有效。
 // 该方法设计为与 LIMIT() 一起使用。
 func (s *selectBuilder) OFFSET(v string) *selectBuilder {
-	s.statement.limit = v
+	s.statement.offset = v
 	return s
 }
 
@@ -202,13 +202,5 @@ func (s *selectBuilder) String() string {
 }
 
 func (s *selectBuilder) Params() []any {
-	result := []any{}
-	sqlString := s.String()
-	matches := s.builder.paramRegexp.FindAllString(sqlString, -1)
-
-	for _, match := range matches {
-		result = append(result, s.builder.params[match])
-	}
-
-	return result
+	return s.builder.Params(s.String())
 }

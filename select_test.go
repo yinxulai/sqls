@@ -21,6 +21,9 @@ func Case1() string {
 	s.HAVING("P.FIRST_NAME like ?")
 	s.ORDER_BY("P.ID")
 	s.ORDER_BY("P.FULL_NAME")
+	s.OFFSET("10")
+	s.LIMIT("20")
+
 	return s.String()
 }
 
@@ -87,7 +90,7 @@ func TestSimpleSelectStatementMissingAllParams(t *testing.T) {
 
 func TestComplexSelectStatement(t *testing.T) {
 	result := Case1()
-	expected := "SELECT P.ID, P.USERNAME, P.PASSWORD, P.FULL_NAME, P.LAST_NAME, P.CREATED_ON, P.UPDATED_ON\nFROM PERSON P, ACCOUNT A\nINNER JOIN DEPARTMENT D on D.ID = P.DEPARTMENT_ID\nINNER JOIN COMPANY C on D.COMPANY_ID = C.ID\nWHERE (P.ID = A.ID AND P.FIRST_NAME like ?) OR (P.LAST_NAME like ?)\nGROUP BY P.ID\nHAVING (P.LAST_NAME like ?) OR (P.FIRST_NAME like ?)\nORDER BY P.ID, P.FULL_NAME"
+	expected := "SELECT P.ID, P.USERNAME, P.PASSWORD, P.FULL_NAME, P.LAST_NAME, P.CREATED_ON, P.UPDATED_ON\nFROM PERSON P, ACCOUNT A\nINNER JOIN DEPARTMENT D on D.ID = P.DEPARTMENT_ID\nINNER JOIN COMPANY C on D.COMPANY_ID = C.ID\nWHERE (P.ID = A.ID AND P.FIRST_NAME like ?) OR (P.LAST_NAME like ?)\nGROUP BY P.ID\nHAVING (P.LAST_NAME like ?) OR (P.FIRST_NAME like ?)\nORDER BY P.ID, P.FULL_NAME\nOFFSET 10\nLIMIT 20"
 
 	if result != expected {
 		t.Errorf("Case1() 返回值为 %s，期望值为 %s", result, expected)
