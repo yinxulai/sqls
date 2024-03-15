@@ -182,11 +182,11 @@ func (s *selectBuilder) String() string {
 
 	sqlString += s.builder.join("FROM", "", s.statement.table, ", ", "")
 
-	sqlString += s.builder.join("JOIN", "", s.statement.join, "\nJOIN ", "")
-	sqlString += s.builder.join("INNER JOIN", "", s.statement.innerJoin, "\nINNER JOIN ", "")
-	sqlString += s.builder.join("OUTER JOIN", "", s.statement.outerJoin, "\nOUTER JOIN ", "")
-	sqlString += s.builder.join("LEFT OUTER JOIN", "", s.statement.leftOuterJoin, "\nLEFT OUTER JOIN ", "")
-	sqlString += s.builder.join("RIGHT OUTER JOIN", "", s.statement.rightOuterJoin, "\nRIGHT OUTER JOIN ", "")
+	sqlString += s.builder.join("JOIN", "", s.statement.join, " JOIN ", "")
+	sqlString += s.builder.join("INNER JOIN", "", s.statement.innerJoin, " INNER JOIN ", "")
+	sqlString += s.builder.join("OUTER JOIN", "", s.statement.outerJoin, " OUTER JOIN ", "")
+	sqlString += s.builder.join("LEFT OUTER JOIN", "", s.statement.leftOuterJoin, " LEFT OUTER JOIN ", "")
+	sqlString += s.builder.join("RIGHT OUTER JOIN", "", s.statement.rightOuterJoin, " RIGHT OUTER JOIN ", "")
 
 	sqlString += s.builder.join("WHERE", "(", s.statement.where, " AND ", ")")
 	sqlString += s.builder.join("GROUP BY", "", s.statement.groupBy, ", ", "")
@@ -198,7 +198,7 @@ func (s *selectBuilder) String() string {
 	if s.statement.limit != "" {
 		sqlString += s.builder.join("LIMIT", "", []string{s.statement.limit}, "", "")
 	}
-	return strings.Trim(sqlString, "\n")
+	return strings.Trim(sqlString, " ")
 }
 
 func (s *selectBuilder) Params() []any {

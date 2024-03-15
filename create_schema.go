@@ -44,7 +44,7 @@ func (s *createSchemaBuilder) String() string {
 	}
 
 	sqlString += s.builder.join(keyword, "", s.statement.schema, "", "")
-	return strings.Trim(sqlString, "\n")
+	return strings.Trim(sqlString, " ")
 }
 
 func (s *createSchemaBuilder) Params() []any {

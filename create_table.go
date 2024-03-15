@@ -51,7 +51,7 @@ func (s *createTableBuilder) String() string {
 
 	sqlString += s.builder.join(keyword, "", []string{s.statement.table}, "", "")
 	sqlString += s.builder.join("", "(", s.statement.columns, ", ", ")")
-	return strings.Trim(sqlString, "\n")
+	return strings.Trim(sqlString, " ")
 }
 
 func (s *createTableBuilder) Params() []any {

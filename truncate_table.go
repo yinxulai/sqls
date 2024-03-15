@@ -33,7 +33,7 @@ func (s *truncateTableBuilder) Param(v any) string {
 func (s *truncateTableBuilder) String() string {
 	var sqlString string
 	sqlString += s.builder.join("TRUNCATE TABLE", "", []string{s.statement.table}, "", "")
-	return strings.Trim(sqlString, "\n")
+	return strings.Trim(sqlString, " ")
 }
 
 func (s *truncateTableBuilder) Params() []any {

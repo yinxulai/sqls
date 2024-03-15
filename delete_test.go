@@ -12,7 +12,7 @@ func TestSimpleDeleteStatement(t *testing.T) {
 	s.LIMIT("20")
 
 	result := s.String()
-	expected := "DELETE FROM PERSON\nWHERE (P.ID = A.ID AND P.FIRST_NAME like ?) OR (P.LAST_NAME like ?)\nOFFSET 10\nLIMIT 20"
+	expected := "DELETE FROM PERSON WHERE (P.ID = A.ID AND P.FIRST_NAME like ?) OR (P.LAST_NAME like ?) OFFSET 10 LIMIT 20"
 
 	if result != expected {
 		t.Errorf("Case1() 返回值为 %s，期望值为 %s", result, expected)

@@ -46,7 +46,7 @@ func (s *insertBuilder) String() string {
 	sqlString += s.builder.join("INSERT INTO", "", s.statement.table, "", "")
 	sqlString += s.builder.join("", "(", s.statement.columns, ", ", ")")
 	sqlString += s.builder.join("VALUES", "(", s.statement.values, ", ", ")")
-	return strings.Trim(sqlString, "\n")
+	return strings.Trim(sqlString, " ")
 }
 
 func (s *insertBuilder) Params() []any {

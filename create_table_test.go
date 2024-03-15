@@ -14,7 +14,7 @@ func TestCreateTableStatement(t *testing.T) {
 	s.COLUMN("created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
 
 	result := s.String()
-	expected := "CREATE TABLE IF NOT EXISTS PERSON\n(id INT PRIMARY KEY, username VARCHAR(50) NOT NULL, email VARCHAR(100) UNIQUE, age INT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"
+	expected := "CREATE TABLE IF NOT EXISTS PERSON (id INT PRIMARY KEY, username VARCHAR(50) NOT NULL, email VARCHAR(100) UNIQUE, age INT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"
 
 	if result != expected {
 		t.Errorf("Case1() 返回值为 %s，期望值为 %s", result, expected)

@@ -79,7 +79,7 @@ func (s *deleteBuilder) String() string {
 	if s.statement.limit != "" {
 		sqlString += s.builder.join("LIMIT", "", []string{s.statement.limit}, "", "")
 	}
-	return strings.Trim(sqlString, "\n")
+	return strings.Trim(sqlString, " ")
 }
 
 func (s *deleteBuilder) Params() []any {

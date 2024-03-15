@@ -18,8 +18,9 @@ func newSqlBuilder() *sqlBuilder {
 	return builder
 }
 
-const orString = ") OR ("
-const andString = ") AND ("
+var orString = ") OR ("
+var andString = ") AND ("
+var condSlice = []string{orString, andString}
 
 // 拼接 sql 的工具方法
 func (s *sqlBuilder) join(keyword string, open string, fields []string, sep string, close string) string {
@@ -29,23 +30,20 @@ func (s *sqlBuilder) join(keyword string, open string, fields []string, sep stri
 
 	var body = ""
 	for index, field := range fields {
-		if (index > 0) && (index != len(field)-1) {
-			// 在 or、and 的前后都不应该添加 sep
-			if !slices.Contains[[]string]([]string{orString, andString}, field) {
-				if !slices.Contains[[]string]([]string{orString, andString}, fields[index-1]) {
-					body += sep
-				}
+		body += field
+		if index != len(fields)-1 {
+			nextField := fields[index+1]
+			if !slices.Contains[[]string](condSlice, field) && !slices.Contains[[]string](condSlice, nextField) {
+				body += sep
 			}
 		}
-
-		body += field
 	}
 
 	if keyword != "" {
-		return keyword + " " + open + body + close + "\n"
+		return keyword + " " + open + body + close + " "
 	}
 
-	return open + body + close + "\n"
+	return open + body + close + " "
 }
 
 func (s *sqlBuilder) Param(v any) string {

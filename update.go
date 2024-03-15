@@ -32,9 +32,9 @@ func newUpdateBuilder() *updateBuilder {
 
 // 启动更新语句并指定要更新的表。
 // 这之后应该是一个或多个 SET() 调用或者 WHERE() 调用。
-func UPDATE(v string) *updateBuilder {
+func UPDATE(table string) *updateBuilder {
 	s := newUpdateBuilder()
-	s.statement.table = append(s.statement.table, v)
+	s.statement.table = append(s.statement.table, table)
 	return s
 }
 
@@ -99,11 +99,11 @@ func (s *updateBuilder) String() string {
 
 	sqlString += s.builder.join("UPDATE", "", s.statement.table, "", "")
 
-	sqlString += s.builder.join("JOIN", "", s.statement.join, "\nJOIN ", "")
-	sqlString += s.builder.join("INNER JOIN", "", s.statement.innerJoin, "\nINNER JOIN ", "")
-	sqlString += s.builder.join("OUTER JOIN", "", s.statement.outerJoin, "\nOUTER JOIN ", "")
-	sqlString += s.builder.join("LEFT OUTER JOIN", "", s.statement.leftOuterJoin, "\nLEFT OUTER JOIN ", "")
-	sqlString += s.builder.join("RIGHT OUTER JOIN", "", s.statement.rightOuterJoin, "\nRIGHT OUTER JOIN ", "")
+	sqlString += s.builder.join("JOIN", "", s.statement.join, " JOIN ", "")
+	sqlString += s.builder.join("INNER JOIN", "", s.statement.innerJoin, " INNER JOIN ", "")
+	sqlString += s.builder.join("OUTER JOIN", "", s.statement.outerJoin, " OUTER JOIN ", "")
+	sqlString += s.builder.join("LEFT OUTER JOIN", "", s.statement.leftOuterJoin, " LEFT OUTER JOIN ", "")
+	sqlString += s.builder.join("RIGHT OUTER JOIN", "", s.statement.rightOuterJoin, " RIGHT OUTER JOIN ", "")
 
 	sqlString += s.builder.join("SET", "", s.statement.set, ", ", "")
 	sqlString += s.builder.join("WHERE", "(", s.statement.where, " AND ", ")")
@@ -114,7 +114,7 @@ func (s *updateBuilder) String() string {
 	if s.statement.limit != "" {
 		sqlString += s.builder.join("LIMIT", "", []string{s.statement.limit}, "", "")
 	}
-	return strings.Trim(sqlString, "\n")
+	return strings.Trim(sqlString, " ")
 }
 
 func (s *updateBuilder) Params() []any {
