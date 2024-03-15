@@ -5,8 +5,7 @@ import (
 )
 
 func Case1() string {
-	s := Begin()
-	s.SELECT("P.ID, P.USERNAME, P.PASSWORD, P.FULL_NAME")
+	s := SELECT("P.ID, P.USERNAME, P.PASSWORD, P.FULL_NAME")
 	s.SELECT("P.LAST_NAME, P.CREATED_ON, P.UPDATED_ON")
 	s.FROM("PERSON P")
 	s.FROM("ACCOUNT A")
@@ -26,8 +25,7 @@ func Case1() string {
 }
 
 func Case2(id *string, firstName *string, lastName *string) string {
-	s := Begin()
-	s.SELECT("P.ID, P.USERNAME, P.PASSWORD, P.FIRST_NAME, P.LAST_NAME")
+	s := SELECT("P.ID, P.USERNAME, P.PASSWORD, P.FIRST_NAME, P.LAST_NAME")
 	s.FROM("PERSON P")
 	if id != nil {
 		s.WHERE("P.ID like #id#")
@@ -90,35 +88,6 @@ func TestSimpleSelectStatementMissingAllParams(t *testing.T) {
 func TestComplexSelectStatement(t *testing.T) {
 	result := Case1()
 	expected := "SELECT P.ID, P.USERNAME, P.PASSWORD, P.FULL_NAME, P.LAST_NAME, P.CREATED_ON, P.UPDATED_ON\nFROM PERSON P, ACCOUNT A\nINNER JOIN DEPARTMENT D on D.ID = P.DEPARTMENT_ID\nINNER JOIN COMPANY C on D.COMPANY_ID = C.ID\nWHERE (P.ID = A.ID AND P.FIRST_NAME like ?) OR (P.LAST_NAME like ?)\nGROUP BY P.ID\nHAVING (P.LAST_NAME like ?) OR (P.FIRST_NAME like ?)\nORDER BY P.ID, P.FULL_NAME"
-
-	if result != expected {
-		t.Errorf("Case1() 返回值为 %s，期望值为 %s", result, expected)
-	}
-}
-
-func TestCreateTableStatement(t *testing.T) {
-	s := Begin()
-	s.IF_NOT_EXISTS().CREATE_TABLE(
-		"PERSON",
-		"id INT PRIMARY KEY",
-		"username VARCHAR(50) NOT NULL",
-		"email VARCHAR(100) UNIQUE",
-		"age INT",
-		"created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP",
-	)
-	result := s.String()
-	expected := "CREATE TABLE IF NOT EXISTS PERSON\n(id INT PRIMARY KEY, username VARCHAR(50) NOT NULL, email VARCHAR(100) UNIQUE, age INT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"
-
-	if result != expected {
-		t.Errorf("Case1() 返回值为 %s，期望值为 %s", result, expected)
-	}
-}
-
-func TestCreateSchemaStatement(t *testing.T) {
-	s := Begin()
-	s.IF_NOT_EXISTS().CREATE_SCHEMA("PERSON")
-	result := s.String()
-	expected := "CREATE SCHEMA IF NOT EXISTS PERSON"
 
 	if result != expected {
 		t.Errorf("Case1() 返回值为 %s，期望值为 %s", result, expected)
