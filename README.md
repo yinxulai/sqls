@@ -1,6 +1,6 @@
 # sqls
 
-[![Go test](https://github.com/yinxulai/sqls/actions/workflows/go.yml/badge.svg)](https://github.com/yinxulai/sqls/actions/workflows/go.yml)
+[![Go test](https://github.com/yinxulai/sqls/actions/workflows/test.yml/badge.svg)](https://github.com/yinxulai/sqls/actions/workflows/test.yml)
 
 sqls is prepared for developers who like to write `sql` by themselves instead of using `ORM`. There is nothing special, it just simply helps you edit `sql` better.
 
