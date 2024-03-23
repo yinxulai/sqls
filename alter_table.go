@@ -5,16 +5,21 @@ import (
 	"strings"
 )
 
+type constraint struct {
+	name    string
+	options string
+}
+
 type alterTableBuilder struct {
 	builder       *sqlBuilder
 	table         string
-	addConstraint map[string]string
+	addConstraint []constraint
 }
 
 func newAlterTableBuilder() *alterTableBuilder {
 	builder := &alterTableBuilder{}
 	builder.builder = newSqlBuilder()
-	builder.addConstraint =make(map[string]string)
+	builder.addConstraint = make([]constraint, 0)
 	return builder
 }
 
@@ -25,7 +30,7 @@ func ALTER_TABLE(table string) *alterTableBuilder {
 }
 
 func (s *alterTableBuilder) ADD_CONSTRAINT(name string, options string) *alterTableBuilder {
-	s.addConstraint[name] = options
+	s.addConstraint = append(s.addConstraint, constraint{name: name, options: options})
 	return s
 }
 
@@ -43,8 +48,8 @@ func (s *alterTableBuilder) String() string {
 
 	if len(s.addConstraint) > 0 {
 		var addConstraint []string
-		for name, options := range s.addConstraint {
-			addConstraint = append(addConstraint, fmt.Sprintf("ADD CONSTRAINT %s %s", name, options))
+		for _, constraint := range s.addConstraint {
+			addConstraint = append(addConstraint, fmt.Sprintf("ADD CONSTRAINT %s %s", constraint.name, constraint.options))
 		}
 		sqlString += s.builder.join("", "", addConstraint, ", ", "")
 	}

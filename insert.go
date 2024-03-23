@@ -45,7 +45,7 @@ func (s *insertBuilder) ON_CONFLICT(v string) *insertBuilder {
 }
 
 func (s *insertBuilder) DO_UPDATE_SET(key string, value string) *insertBuilder {
-	s.statement.doUpdateSet = append(s.statement.onConflict, key+"="+value)
+	s.statement.doUpdateSet = append(s.statement.doUpdateSet, key+"="+value)
 	return s
 }
 
@@ -61,7 +61,7 @@ func (s *insertBuilder) String() string {
 
 	if len(s.statement.onConflict) > 0 && len(s.statement.doUpdateSet) > 0 {
 		sqlString += s.builder.join("ON CONFLICT", "(", s.statement.onConflict, ", ", ")")
-		sqlString += s.builder.join("DO UPDATE SET", "", s.statement.onConflict, ", ", "")
+		sqlString += s.builder.join("DO UPDATE SET", "", s.statement.doUpdateSet, ", ", "")
 	}
 
 	return strings.Trim(sqlString, " ")
