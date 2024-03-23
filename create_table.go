@@ -7,6 +7,7 @@ import (
 type createTableStatement struct {
 	table       string
 	columns     []string
+	options     []string
 	ifNotExists bool
 }
 
@@ -38,6 +39,11 @@ func (s *createTableBuilder) COLUMN(v string) *createTableBuilder {
 	return s
 }
 
+func (s *createTableBuilder) OPTIONS(v string) *createTableBuilder {
+	s.statement.columns = append(s.statement.columns, v)
+	return s
+}
+
 func (s *createTableBuilder) Param(v any) string {
 	return s.builder.Param(v)
 }
@@ -50,7 +56,7 @@ func (s *createTableBuilder) String() string {
 	}
 
 	sqlString += s.builder.join(keyword, "", []string{s.statement.table}, "", "")
-	sqlString += s.builder.join("", "(", s.statement.columns, ", ", ")")
+	sqlString += s.builder.join("", "(", append(append([]string{}, s.statement.columns...), s.statement.options...), ", ", ")")
 	return strings.Trim(sqlString, " ")
 }
 

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"regexp"
 	"slices"
+	"sort"
 )
 
 type sqlBuilder struct {
@@ -53,13 +54,23 @@ func (s *sqlBuilder) Param(v any) string {
 	return key
 }
 
+// 目前仅支持 postgresql
 func (s *sqlBuilder) Params(sql string) []any {
 	result := []any{}
 	matches := paramRegexp.FindAllString(sql, -1)
+	sort.Strings(matches)
 
 	for _, match := range matches {
 		result = append(result, s.params[match])
 	}
 
 	return result
+}
+
+func (s *sqlBuilder) Clone() *sqlBuilder {
+	ns := &sqlBuilder{}
+	for key, value  := range ns.params {
+		ns.params[key] = value
+	}
+	return ns
 }

@@ -5,9 +5,11 @@ import (
 )
 
 type insertStatement struct {
-	table   []string
-	columns []string
-	values  []string
+	table       []string
+	columns     []string
+	values      []string
+	onConflict  []string
+	doUpdateSet []string
 }
 
 type insertBuilder struct {
@@ -37,6 +39,16 @@ func (s *insertBuilder) VALUES(key string, value string) *insertBuilder {
 	return s
 }
 
+func (s *insertBuilder) ON_CONFLICT(v string) *insertBuilder {
+	s.statement.onConflict = append(s.statement.onConflict, v)
+	return s
+}
+
+func (s *insertBuilder) DO_UPDATE_SET(key string, value string) *insertBuilder {
+	s.statement.doUpdateSet = append(s.statement.onConflict, key+"="+value)
+	return s
+}
+
 func (s *insertBuilder) Param(v any) string {
 	return s.builder.Param(v)
 }
@@ -46,6 +58,12 @@ func (s *insertBuilder) String() string {
 	sqlString += s.builder.join("INSERT INTO", "", s.statement.table, "", "")
 	sqlString += s.builder.join("", "(", s.statement.columns, ", ", ")")
 	sqlString += s.builder.join("VALUES", "(", s.statement.values, ", ", ")")
+
+	if len(s.statement.onConflict) > 0 && len(s.statement.doUpdateSet) > 0 {
+		sqlString += s.builder.join("ON CONFLICT", "(", s.statement.onConflict, ", ", ")")
+		sqlString += s.builder.join("DO UPDATE SET", "", s.statement.onConflict, ", ", "")
+	}
+
 	return strings.Trim(sqlString, " ")
 }
 
