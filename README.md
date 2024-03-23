@@ -1,5 +1,7 @@
 # sqls
 
+[![Go test](https://github.com/yinxulai/sqls/actions/workflows/test.yml/badge.svg)](https://github.com/yinxulai/sqls/actions/workflows/test.yml)
+
 sqls is prepared for developers who like to write `sql` by themselves instead of using `ORM`. There is nothing special, it just simply helps you edit `sql` better.
 
 > The meaning of sqls is `sql+s`, where `s` means `string` and `simple`, `small`
