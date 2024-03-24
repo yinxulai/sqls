@@ -10,6 +10,7 @@ type insertStatement struct {
 	values      []string
 	onConflict  []string
 	doUpdateSet []string
+	doNothing   bool
 }
 
 type insertBuilder struct {
@@ -46,6 +47,12 @@ func (s *insertBuilder) ON_CONFLICT(v string) *insertBuilder {
 
 func (s *insertBuilder) DO_UPDATE_SET(key string, value string) *insertBuilder {
 	s.statement.doUpdateSet = append(s.statement.doUpdateSet, key+"="+value)
+	s.statement.doNothing = false
+	return s
+}
+
+func (s *insertBuilder) DO_NOTHING() *insertBuilder {
+	s.statement.doNothing = true
 	return s
 }
 
@@ -59,9 +66,13 @@ func (s *insertBuilder) String() string {
 	sqlString += s.builder.join("", "(", s.statement.columns, ", ", ")")
 	sqlString += s.builder.join("VALUES", "(", s.statement.values, ", ", ")")
 
-	if len(s.statement.onConflict) > 0 && len(s.statement.doUpdateSet) > 0 {
+	if len(s.statement.onConflict) > 0 {
 		sqlString += s.builder.join("ON CONFLICT", "(", s.statement.onConflict, ", ", ")")
-		sqlString += s.builder.join("DO UPDATE SET", "", s.statement.doUpdateSet, ", ", "")
+		if len(s.statement.doUpdateSet) > 0 && !s.statement.doNothing {
+			sqlString += s.builder.join("DO UPDATE SET", "", s.statement.doUpdateSet, ", ", "")
+		} else if s.statement.doNothing {
+			sqlString += s.builder.join("DO NOTHING", "", []string{}, "", "")
+		}
 	}
 
 	return strings.Trim(sqlString, " ")
